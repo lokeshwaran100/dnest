@@ -27,8 +27,11 @@ contract RentalContract {
     event RentPaid(address indexed renter, uint256 rentAmount);
 	
     // posts property
-	function postProperty(uint256 depositAmount, uint256 rentAmount, address tokenAddress) external {
-		Property storage property = properties[msg.sender][count[msg.sender]];
+	function postProperty(uint256 depositAmount, uint256 rentAmount, address tokenAddress) external returns (uint256) {
+
+		uint256 id = count[msg.sender];
+
+		Property storage property = properties[msg.sender][id];
 		property.token = IERC20(tokenAddress);
 		property.houseOwner = msg.sender;
 		property.depositAmount = depositAmount;
@@ -38,9 +41,11 @@ contract RentalContract {
 		property.months = 11;
 		property.startTime = block.timestamp;
 		
-		emit PropertyPosted(count[msg.sender]);
+		emit PropertyPosted(id);
 		
 		count[msg.sender] += 1;
+
+		return id;
 	}
 
     // Pays security deposit DST-20 tokens into the rental protocol
